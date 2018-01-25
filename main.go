@@ -22,7 +22,7 @@ func main() {
 	filepath.Walk(root, func(path string, info os.FileInfo, err error) error {
 		relativePath, _ := filepath.Rel(root, path)
 		if strings.HasSuffix(relativePath, ".json") {
-			handleJSON(path, relativePath)
+			handleJSON(path, filepath.Join("/", relativePath))
 		}
 		return nil
 	})
@@ -31,7 +31,8 @@ func main() {
 }
 
 func handleJSON(absPath string, relPath string) {
-	http.HandleFunc(filepath.Join("/", relPath), func(writer http.ResponseWriter, request *http.Request) {
+	fmt.Printf("Listen: http://localhost:8080%v\n", relPath)
+	http.HandleFunc(relPath, func(writer http.ResponseWriter, request *http.Request) {
 		file, error := ioutil.ReadFile(absPath)
 		if error != nil {
 			fmt.Printf("error: %v\n", error)
